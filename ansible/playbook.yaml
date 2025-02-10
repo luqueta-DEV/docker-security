@@ -1,0 +1,15 @@
+- hosts: localhost
+  tasks:
+    - name: Config das regras firewall (zero trust)
+      command: iptables -A INPUT -p tcp --dport 80 -j DROP
+
+    - name: Config atenticacao
+      lineinfile:
+        path: /etc/nginx/nginx.conf
+        line: "auth_basic \"Restricted\"; auth_basic_user_file /etc/nginx/.htpasswd;"
+        insertafter: "server {"
+
+    - name:  Reinicia o Servico Ngnix
+      service:
+        name: Ngnix
+        state: restarted
