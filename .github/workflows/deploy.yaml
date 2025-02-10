@@ -1,0 +1,45 @@
+name: Secure Infra Deployment with C++
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v2
+
+      - name: Compilar e testar a aplicação C++
+        run: |
+          cd cpp-app
+          g++ -o my_app main.cpp
+          ./my_app
+
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.2.0
+
+      - name: Executar Terraform
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Executar Ansible
+        run: |
+          cd ansible
+          ansible-playbook -i inventory playbook.yml
+
+      - name: Executar Pulumi
+        run: |
+          cd pulumi
+          pulumi up -y
+
+      - name: Verificação de Segurança
+        run: |
+          cd security
+          ./run_security_checks.sh

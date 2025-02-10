@@ -1,0 +1,11 @@
+FROM gcc:latest
+
+RUN apt-get update && apt-get install -y cmake make
+
+COPY ./app /usr/src/app
+
+WORKDIR /usr/src/app
+
+RUN g++ -o my_app main.cpp
+
+CMD ["./my_app"]
